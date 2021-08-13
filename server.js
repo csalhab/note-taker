@@ -37,6 +37,8 @@ const notes = [
   },
 ];
 
+//3) HANDLE REQUEST =============================
+
 //HTML ROUTES ======================
 //-- home page
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
@@ -47,11 +49,23 @@ app.get("/notes", (req, res) =>
 );
 
 //API ROUTES ======================
+//-- /api/notes GET
 app.get("/api/notes", (req, res) => res.json(notes));
 
-//3) HANDLE REQUEST =============================
+//-- /api/notes POST
+app.post("/api/notes", (req, res) => {
+  // req.body is equal to the JSON post sent from the user
+  // This works because of our body parsing middleware
+  const newNote = req.body;
 
-//4) CREATE SERVER
+  console.log(newNote.title, newNote.text);
+
+  notes.push(newNote);
+  res.json(newNote);
+});
+
+//4) CREATE SERVER ==============================
+//Since using Express, this is app = express()
 
 //5) LISTEN =====================================
 
