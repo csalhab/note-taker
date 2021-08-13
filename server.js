@@ -1,6 +1,8 @@
 //1) PACKAGE/HTTP ===============================
 const express = require("express");
 const path = require("path");
+// fs is a Node standard library package for reading and writing files
+const fs = require("fs");
 //setup the Express app:
 const app = express();
 
@@ -38,6 +40,7 @@ const notes = [
 ];
 
 //3) HANDLE REQUEST =============================
+//with Express, this is the callback function inside the .get
 
 //HTML ROUTES ======================
 //-- home page
@@ -50,7 +53,14 @@ app.get("/notes", (req, res) =>
 
 //API ROUTES ======================
 //-- /api/notes GET
-app.get("/api/notes", (req, res) => res.json(notes));
+//app.get("/api/notes", (req, res) => res.json(notes));
+//instead of temp array with note, use readFileSync?
+app.get("/api/notes", (req, res) => {
+  let rawData = fs.readFileSync("./db/db.json", "utf8");
+  let notesData = JSON.parse(rawData);
+  //console.log(notesData); //this worked!!
+  res.json(notesData);
+});
 
 //-- /api/notes POST
 app.post("/api/notes", (req, res) => {
