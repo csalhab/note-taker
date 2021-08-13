@@ -19,28 +19,6 @@ app.use(express.static("public"));
 
 //DATA ========================
 const notes = [];
-// const notes = [
-//   {
-//     title: "Express Server",
-//     text: "1st step, get my Express Server setup. require('expres') is needed.",
-//   },
-//   {
-//     title: "HTML Routes",
-//     text: "Add html routes. There are 2, index.html and notes.html",
-//   },
-//   {
-//     title: "API Routes",
-//     text: "Add API routes. There will be 2 needed: GET /api/notes & POST /api/notes",
-//   },
-//   {
-//     title: "__dirname Dependency",
-//     text: "require('path') to use on path.join(__dirname..",
-//   },
-//   {
-//     title: "Express Data Parsing.",
-//     text: "Make sure to do app.use(express.. for both urlencoded & json.",
-//   },
-// ];
 
 //3) HANDLE REQUEST =============================
 //with Express, this is the callback function inside the .get
@@ -68,14 +46,7 @@ app.get("/api/notes", (req, res) => {
 app.post("/api/notes", (req, res) => {
   // req.body is equal to the JSON post sent from the user
   // This works because of our body parsing middleware
-  /* Instead of this using code array, trying with writeFileSync
-  const newNote = req.body;
 
-  console.log(newNote.title, newNote.text);
-
-  notes.push(newNote);
-  res.json(newNote);
-  */
   //must read file 1st and parse out its data in order to add new data to it:
   let rawData = fs.readFileSync("./db/db.json", "utf8");
   let notesData = JSON.parse(rawData);
@@ -98,17 +69,45 @@ app.post("/api/notes", (req, res) => {
 
   //this adds the new data to what was in file
   notesData.push(newNoteData);
+  //make data valid JSON & write it to file
   let newNotesData = JSON.stringify(notesData);
   fs.writeFileSync("./db/db.json", newNotesData);
 
   console.log("app.post /api/notes -----");
   console.log(newNotesData);
-  //refreshes response with all the data that now includes new note
+  //response available with all the data that now includes new note
+  res.json(newNotesData);
+});
+
+//-- /api/notes DELETE - bonus
+app.delete("/api/notes/:id", (req, res) => {
+  /*
+  -should receive a query parameter containing the id of a note to delete. 
+  -In order to delete a note, you'll need to read all notes from the db.json. file, remove the note with the given id property, and then rewrite the notes to the db.json file.
+  */
+  console.log(req.params.id);
+  //-should receive a query parameter containing the id of a note to delete.
+  const noteIdToDelete = req.params.id;
+  //-In order to delete a note, you'll need to read all notes from the db.json. file
+  let rawData = fs.readFileSync("./db/db.json", "utf8");
+  let notesData = JSON.parse(rawData);
+  //-remove the note with the given id property
+  console.log(notesData);
+  notesData.splice(noteIdToDelete, 1);
+  console.log(notesData);
+  //-and then rewrite the notes to the db.json file
+  //make data valid JSON & write it to file
+  let newNotesData = JSON.stringify(notesData);
+  fs.writeFileSync("./db/db.json", newNotesData);
+
+  console.log("app.delete /api/notes -----");
+  console.log(newNotesData);
+  //response available with all the data that now includes new note
   res.json(newNotesData);
 });
 
 //4) CREATE SERVER ==============================
-//Since using Express, this is app = express()
+//Since using Express, this is app = express() issued way above in beginning
 
 //5) LISTEN =====================================
 
