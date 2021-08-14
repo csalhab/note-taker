@@ -77,7 +77,8 @@ app.delete("/api/notes/:id", (req, res) => {
   let rawData = fs.readFileSync("./db/db.json", "utf8");
   let notesData = JSON.parse(rawData);
   //-remove the note with the given id property
-  notesData.splice(noteIdToDelete, 1);
+  //this .filter() actually returns an array holding all the objects that were not removed
+  notesData = notesData.filter((data) => data.id != noteIdToDelete);
   //-and then rewrite the notes to the db.json file
   //make data valid JSON & write it to file
   let newNotesData = JSON.stringify(notesData);
